@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scsc.rbac.mapper.UserMapper">
+    <resultMap id="UserMap" type="com.scsc.rbac.entity.User">
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="full_name" jdbcType="VARCHAR" property="fullName"/>
+        <result column="active" jdbcType="TINYINT" property="active"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="updateTime" jdbcType="BIGINT" property="updateTime"/>
+        <result column="salt" jdbcType="VARCHAR" property="salt"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="role_id" jdbcType="VARCHAR" property="roleId"/>
+    </resultMap>
+
+    <resultMap id="loginResult" type="com.scsc.rbac.entity.LoginResult">
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="role_english_name" jdbcType="VARCHAR" property="roleEnglishName"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+    </resultMap>
+
+    <resultMap id="getResource" type="com.scsc.rbac.entity.Resource">
+        <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl"/>
+        <result column="resource_name" jdbcType="VARCHAR" property="resourceName"/>
+        <result column="add" jdbcType="TINYINT" property="add"/>
+        <result column="delete" jdbcType="TINYINT" property="delete"/>
+        <result column="select" jdbcType="TINYINT" property="select"/>
+        <result column="edit" jdbcType="TINYINT" property="edit"/>
+    </resultMap>
+    <select id="login" resultMap="loginResult">
+    select u.user_id ,u.user_name ,r.role_english_name ,r.role_name FROM user u , role r WHERE u.role_id = r.role_id and u.user_id = #{userId};
+    </select>
+
+    <select id="getUserInfo" resultMap="getResource">
+    SELECT re.resource_url , re.resource_name ,re.`add` , re.`delete` , re.`select`, re.edit from user u , role ro , resource re where u.role_id = ro.role_id and ro.role_id = re.role_id AND u.user_id = #{userId};
+    </select>
+
+    <select id="findByUserName" resultMap="UserMap">
+        select * from user where user_name = #{username}
+    </select>
+</mapper>

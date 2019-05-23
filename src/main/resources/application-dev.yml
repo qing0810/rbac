@@ -1,0 +1,33 @@
+#开发环境
+server:
+  port: 8080
+  servlet:
+    context-path: /
+spring:
+  datasource:
+    username: zyq
+    password: zyq
+    url: jdbc:mysql://172.16.0.197:3306/zyq_rbac?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.scsc.rbac.entity
+
+#showSql
+
+logging:
+  level:
+    com:
+      scsc:
+        rbac:
+          mapper: debug
+

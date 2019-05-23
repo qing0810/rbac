@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scsc.rbac.mapper.TokenMapper">
+    <resultMap id="TokenMap" type="com.scsc.rbac.entity.Token">
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="token_id" jdbcType="INTEGER" property="tokenId"/>
+        <result column="token" jdbcType="VARCHAR" property="token"/>
+        <result column="updatetime" jdbcType="INTEGER" property="updateTime"/>
+    </resultMap>
+
+    <select id="getToken" resultMap="TokenMap">
+        select * from token_info where user_id = #{userId}
+    </select>
+    <insert id="addToken">
+        insert into token_info (user_id , token , updatetime) values (#{userId} , #{token} ,#{updateTime})
+    </insert>
+    <update id="updateToken">
+        update token_info set token = #{token} ,updatetime = #{updateTime} where token_id = #{tokenId}
+    </update>
+</mapper>
