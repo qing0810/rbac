@@ -7,11 +7,29 @@ import java.io.Serializable;
  * @date 2019/5/6 9:31
  */
 public class LoginResult implements Serializable {
+    private String name;
     private Integer userId;
-    private String roleName;
-    private String roleEnglishName;
+//    private String roleName;
+    private String roles;
     private String userName;
     private String token;
+    private String avatar;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public String getUserName() {
         return userName;
@@ -21,12 +39,12 @@ public class LoginResult implements Serializable {
         this.userName = userName;
     }
 
-    public String getRoleEnglishName() {
-        return roleEnglishName;
+    public String getRoles() {
+        return roles;
     }
 
-    public void setRoleEnglishName(String roleEnglishName) {
-        this.roleEnglishName = roleEnglishName;
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
     public String getToken() {
@@ -45,22 +63,24 @@ public class LoginResult implements Serializable {
         this.userId = userId;
     }
 
-    public String getRoleName() {
-        return roleName;
-    }
+//    public String getRoleName() {
+//        return roleName;
+//    }
+//
+//    public void setRoleName(String roleName) {
+//        this.roleName = roleName;
+//    }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
 
     @Override
     public String toString() {
         return "LoginResult{" +
-                "userId=" + userId +
-                ", roleName='" + roleName + '\'' +
-                ", roleEnglishName='" + roleEnglishName + '\'' +
+                "name='" + name + '\'' +
+                ", userId=" + userId +
+                ", roles='" + roles + '\'' +
                 ", userName='" + userName + '\'' +
                 ", token='" + token + '\'' +
+                ", avatar='" + avatar + '\'' +
                 '}';
     }
 }

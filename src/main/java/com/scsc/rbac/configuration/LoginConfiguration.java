@@ -23,10 +23,12 @@ public class LoginConfiguration extends WebMvcConfigurerAdapter {
 //        LoginInterceptor loginInterceptor = new LoginInterceptor();
         InterceptorRegistration loginRegistry = registry.addInterceptor(myLoginInterceptor());
         //拦截路径
-        loginRegistry.addPathPatterns("/**");
+//        loginRegistry.addPathPatterns("/**");
         //排除路径
-        loginRegistry.excludePathPatterns("/user/login");
-        loginRegistry.excludePathPatterns("/swagger-ui.*");
+//        loginRegistry.excludePathPatterns("/user/login");
+//        loginRegistry.excludePathPatterns("/swagger-ui.*");
+
+        loginRegistry.excludePathPatterns("/**");
         //排除资源请求
         loginRegistry.excludePathPatterns("/webjars/**");
         loginRegistry.excludePathPatterns("/swagger-resources/**");

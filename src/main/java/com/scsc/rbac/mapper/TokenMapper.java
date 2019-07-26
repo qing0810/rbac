@@ -1,6 +1,7 @@
 package com.scsc.rbac.mapper;
 
 import com.scsc.rbac.entity.Token;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -22,7 +23,7 @@ public interface TokenMapper {
      * @param token
      * @param updateTime
      */
-    void addToken(int userId , String token ,long updateTime);
+    void addToken(@Param("userId") int userId , @Param("token") String token ,@Param("updateTime") long updateTime);
 
     /**
      * 修改token
@@ -30,5 +31,5 @@ public interface TokenMapper {
      * @param updateTime
      * @param tokenId
      */
-    void updateToken(String token ,long updateTime , int tokenId);
+    void updateToken(@Param("token") String token , @Param("updateTime")long updateTime , @Param("tokenId")int tokenId);
 }

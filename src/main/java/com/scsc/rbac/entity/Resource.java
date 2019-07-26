@@ -14,6 +14,7 @@ public class Resource implements Serializable {
     private boolean select;
     private boolean edit;
 
+
     public String getResourceUrl() {
         return resourceUrl;
     }

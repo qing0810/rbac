@@ -5,18 +5,15 @@ import com.scsc.rbac.entity.*;
 import com.scsc.rbac.service.LogService;
 import com.scsc.rbac.service.TokenService;
 import com.scsc.rbac.service.UserService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,19 +33,19 @@ public class LoginViewController {
     private LogService logService;
 
     @PostMapping("/login")
-    public Map login(@RequestParam String username , @RequestParam String password , HttpServletRequest request){
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+    public Map login(@RequestBody LoginUser loginUser){
+        if (StringUtils.isEmpty(loginUser.getUsername()) || StringUtils.isEmpty(loginUser.getPassword())){
             return ResultBuilder.buildError("用户名或密码不能为空！");
         }
         // TODO: 2019/5/7  需要ip
         //无论登录成功或失败都存入数据库中
         Log log = new Log();
-        log.setUserName(username);
+        log.setUserName(loginUser.getUsername());
         log.setLoginTime(System.currentTimeMillis());
         log.setIp("172.16.2.121");
 
 
-        User user = userService.findByUserName(username);
+        User user = userService.findByUserName(loginUser.getUsername());
         if (null == user){
 
             log.setSuccess(false);
@@ -56,7 +53,7 @@ public class LoginViewController {
             logService.addLog(log);
             return ResultBuilder.buildError("用户不存在!");
         }
-        if (!password.equals(user.getPassword())){
+        if (!loginUser.getPassword().equals(user.getPassword())){
 
             log.setSuccess(false);
 
@@ -90,25 +87,40 @@ public class LoginViewController {
             token.setUpdateTime(nowTime);
             tokenService.updateToken(token);
         }
-        loginResult.setToken(tokenStr);
-        HttpSession session = request.getSession();
-        session .setAttribute("token" ,tokenStr);
-        session.setMaxInactiveInterval(30*60);
-        return ResultBuilder.buildSuccess(loginResult);
+        LoginResultToken loginResultToken = new LoginResultToken();
+        loginResultToken.setToken(tokenStr);
+        return ResultBuilder.buildSuccess(loginResultToken);
     }
 
-    @PostMapping("/getUserInfo")
-    public Map getUserInfo(@RequestParam int userId ,HttpServletRequest request){
+    @GetMapping("/getUserInfo")
+    public Map getUserInfo(@RequestParam String  token){
+        int userId;
+        int timeInterval = 60 * 60 * 12;
+        try {
+            Claims claims = Jwts.parser().setSigningKey("qing").parseClaimsJws(token).getBody();
+            String tokenUserId = (String)claims.get("userId");
+             userId = Integer.parseInt(tokenUserId);
+            Date tokenDate = claims.getExpiration();
+            int overTime = (int)(System.currentTimeMillis() - tokenDate.getTime())/1000;
+            if (overTime > timeInterval){
+                return ResultBuilder.buildError("Toke过期,请从新登陆");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultBuilder.buildError("....");
+        }
+
         List<Resource> lists = userService.getUserInfo(userId);
+
         LoginResult loginResult = userService.login(userId);
         UserInfo userInfo = new UserInfo();
+        userInfo.setAvatar(loginResult.getAvatar());
+        userInfo.setUserId(loginResult.getUserId());
+        userInfo.setName(loginResult.getName());
         userInfo.setResources(lists);
         userInfo.setUserName(loginResult.getUserName());
-        userInfo.setRoleName(loginResult.getRoleName());
-        Token token = tokenService.getToken(userId);
-        HttpSession session = request.getSession();
-        session.setAttribute("token", token.getToken());
-        session.setMaxInactiveInterval(30*60);
+        String []roles= {loginResult.getRoles()};
+        userInfo.setRoles(roles);
         return ResultBuilder.buildSuccess(userInfo);
     }
 
@@ -130,7 +142,7 @@ public class LoginViewController {
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
                 // 设置签发时间
                 .setHeaderParam("alg", "HS256").setIssuedAt(date)
-                .setExpiration(new Date(date.getTime() + 1000 * 60 * 5))
+                .setExpiration(new Date(date.getTime() + 1000 * 60 * 60 * 12))
                 // 设置内容
                 .claim("userId",String.valueOf(loginResult.getUserId() ) )
                 // 设置签发人

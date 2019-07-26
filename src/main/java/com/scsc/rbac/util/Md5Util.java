@@ -1,5 +1,7 @@
 package com.scsc.rbac.util;
 
+import org.springframework.util.DigestUtils;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -9,6 +11,7 @@ import java.security.MessageDigest;
  * @date 2019/4/19 10:07
  */
 public class Md5Util {
+    private static final String slat = "scsc.tech";
     public static String getMD5String(String str) {
         try {
             // 生成一个MD5加密计算摘要
@@ -30,10 +33,14 @@ public class Md5Util {
     public static String getMD5WithSalt(String content ,String salt) {
         return getMD5String(getMD5String(content) + salt);
     }
+    public static String getMD5(String str) {
+        String base = str + slat;
+        String md5 = DigestUtils.md5DigestAsHex(base.getBytes());
+        return md5;
+    }
     public static void main(String[] args) {
-        String content = "aBc";
-        String salt = UUIDUtil.getUUID();
-        String result = getMD5WithSalt(content ,salt);
-        System.out.println(result);
+        String str = "adminadmin";
+        String md5= getMD5(str);
+        System.out.println(md5);
     }
 }

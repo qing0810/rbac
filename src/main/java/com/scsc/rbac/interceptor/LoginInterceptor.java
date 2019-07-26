@@ -3,12 +3,9 @@ package com.scsc.rbac.interceptor;
 import com.scsc.rbac.entity.Token;
 import com.scsc.rbac.service.TokenService;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -35,6 +32,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object token = request.getSession().getAttribute("token");
+        Object loginUserId =  request.getSession().getAttribute("userId");
+        System.out.println(loginUserId);
         if (StringUtils.isEmpty(token) || !(token instanceof String)) {
             return false;
         }
@@ -53,7 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             //判断Toke过期
             Date tokenDate = claims.getExpiration();
             int overTime = (int)(System.currentTimeMillis() - tokenDate.getTime())/1000;
-            if (overTime > 60*30){
+            if (overTime > 60*5){
                 return false;
             }
         } catch (Exception e) {

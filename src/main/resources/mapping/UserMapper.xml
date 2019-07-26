@@ -16,9 +16,11 @@
 
     <resultMap id="loginResult" type="com.scsc.rbac.entity.LoginResult">
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
-        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
-        <result column="role_english_name" jdbcType="VARCHAR" property="roleEnglishName"/>
+        <!--<result column="role_name" jdbcType="VARCHAR" property="roleName"/>-->
+        <result column="role_english_name" jdbcType="VARCHAR" property="roles"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="full_name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
     <resultMap id="getResource" type="com.scsc.rbac.entity.Resource">
@@ -28,13 +30,14 @@
         <result column="delete" jdbcType="TINYINT" property="delete"/>
         <result column="select" jdbcType="TINYINT" property="select"/>
         <result column="edit" jdbcType="TINYINT" property="edit"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     </resultMap>
     <select id="login" resultMap="loginResult">
-    select u.user_id ,u.user_name ,r.role_english_name ,r.role_name FROM user u , role r WHERE u.role_id = r.role_id and u.user_id = #{userId};
+    select r.role_english_name ,u.user_id ,u.user_name ,u.full_name , u.avatar FROM user u , role r WHERE u.role_id = r.role_id and u.user_id = #{userId};
     </select>
 
     <select id="getUserInfo" resultMap="getResource">
-    SELECT re.resource_url , re.resource_name ,re.`add` , re.`delete` , re.`select`, re.edit from user u , role ro , resource re where u.role_id = ro.role_id and ro.role_id = re.role_id AND u.user_id = #{userId};
+    SELECT  re.resource_url , re.resource_name ,re.`add` , re.`delete` , re.`select`, re.edit from user u , role ro , resource re where u.role_id = ro.role_id and ro.role_id = re.role_id AND u.user_id = #{userId};
     </select>
 
     <select id="findByUserName" resultMap="UserMap">

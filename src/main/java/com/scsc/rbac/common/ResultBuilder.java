@@ -33,6 +33,7 @@ public class ResultBuilder {
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("success", true);
         map.put("data", data);
+        map.put("code",20000);
         return map;
     }
 
@@ -40,6 +41,7 @@ public class ResultBuilder {
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("success", true);
         map.put("data", data);
+        map.put("code",20000);
         map.put("version", version);
         return map;
     }
@@ -53,6 +55,7 @@ public class ResultBuilder {
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("success", false);
         map.put("errorMessage", errMessage);
+        map.put("code",20000);
         return map;
     }
 
